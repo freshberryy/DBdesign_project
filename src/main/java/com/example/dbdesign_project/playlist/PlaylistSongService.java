@@ -1,34 +1,26 @@
 package com.example.dbdesign_project.playlist;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PlaylistSongService {
-
     private final PlaylistSongRepository playlistSongRepository;
 
-    @Autowired
     public PlaylistSongService(PlaylistSongRepository playlistSongRepository) {
         this.playlistSongRepository = playlistSongRepository;
     }
 
     // 재생목록에 노래 추가
-    public String addSongToPlaylist(int listId, int songId) {
-        int result = playlistSongRepository.addSongToPlaylist(listId, songId);
-        return result == 1 ? "노래가 재생목록에 추가되었습니다." : "노래 추가 실패.";
+    @Transactional
+    public boolean addSongToPlaylist(Integer listId, Integer songId) {
+        // 추가 성공 시 1 이상의 값을 반환하므로 > 0으로 성공 여부 확인
+        return playlistSongRepository.addSongToPlaylist(listId, songId) > 0;
     }
 
     // 재생목록에서 노래 제거
-    public String removeSongFromPlaylist(int listId, int songId) {
-        int result = playlistSongRepository.removeSongFromPlaylist(listId, songId);
-        return result == 1 ? "노래가 재생목록에서 삭제되었습니다." : "노래 삭제 실패.";
-    }
-
-    // 재생목록에 포함된 모든 노래 ID 조회
-    public List<Integer> getSongsInPlaylist(int listId) {
-        return playlistSongRepository.findSongsByPlaylistId(listId);
+    @Transactional
+    public boolean removeSongFromPlaylist(Integer listId, Integer songId) {
+        return playlistSongRepository.removeSongFromPlaylist(listId, songId) > 0;
     }
 }

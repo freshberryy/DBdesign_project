@@ -1,36 +1,34 @@
 package com.example.dbdesign_project.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    // 새로운 사용자 등록 메서드
-    public String registerUser(String userName, String password) {
-        // 사용자 이름 중복 확인
-        try {
-            if (userRepository.findUserByName(userName) != null) {
-                return "이미 존재하는 사용자 이름입니다.";
-            }
-        } catch (Exception e) {
-            // userName으로 조회할 때 결과가 없으면 예외 발생; 신규 사용자로 간주
+    // 회원가입
+    public boolean register(User user) {
+        if (userRepository.findByUsername(user.getUserName()).isPresent()) {
+            return false; // 사용자 이름 중복
         }
-
-        // 사용자 등록
-        int result = userRepository.addUser(userName, password);
-        return result == 1 ? "사용자 등록 성공" : "사용자 등록 실패";
+        userRepository.save(user);
+        return true;
     }
 
-    // ID로 사용자 조회 메서드
-    public User getUserById(int userId) {
-        return userRepository.findUserById(userId);
+    // 사용자 조회
+    public Optional<User> findUserById(Integer userId) {
+        return userRepository.findById(userId);
+    }
+
+    // 로그인 처리 (단순 비교)
+    public boolean login(String userName, String password) {
+        return userRepository.findByUsername(userName)
+                .filter(user -> user.getPassword().equals(password))
+                .isPresent();
     }
 }
