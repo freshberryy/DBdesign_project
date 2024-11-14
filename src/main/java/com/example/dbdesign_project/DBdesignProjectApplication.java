@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DBdesignProjectApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DBdesignProjectApplication.class, args);
+        SpringApplication.run(DBdesignProjectApplication.class, args); // args 추가
     }
-
 }
