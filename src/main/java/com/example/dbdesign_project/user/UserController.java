@@ -1,43 +1,53 @@
 package com.example.dbdesign_project.user;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
-@RestController
-@RequestMapping("/api/users")
+@Controller
+@RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserDAO userDAO;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
-    // 회원가입
+    // 회원가입 페이지
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
+    }
+
+    // 회원가입 처리
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-        if (userService.register(user)) {
-            return ResponseEntity.ok("회원가입이 완료되었습니다.");
+    public String registerUser(@RequestParam String userName, @RequestParam String password, Model model) {
+        int result = userDAO.registerUser(userName, password);
+        if (result > 0) {
+            model.addAttribute("message", "회원가입 성공!");
+            return "login"; // 회원가입 성공 시 로그인 페이지로 이동
         } else {
-            return ResponseEntity.badRequest().body("이미 존재하는 사용자입니다.");
+            model.addAttribute("message", "회원가입 실패: 이미 존재하는 사용자입니다.");
+            return "register"; // 실패 시 다시 회원가입 페이지로 이동
         }
     }
 
-    // 로그인
+    // 로그인 페이지
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
+    // 로그인 처리
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String userName, @RequestParam String password) {
-        if (userService.login(userName, password)) {
-            return ResponseEntity.ok("로그인 성공");
+    public String loginUser(@RequestParam String userName, @RequestParam String password, Model model) {
+        boolean loginSuccess = userDAO.loginUser(userName, password);
+        if (loginSuccess) {
+            model.addAttribute("message", "로그인 성공!");
+            return "redirect:/playlists"; // 로그인 성공 시 재생목록 페이지로 이동
         } else {
-            return ResponseEntity.status(401).body("로그인 실패: 사용자 이름 또는 비밀번호가 일치하지 않습니다.");
+            model.addAttribute("message", "로그인 실패: 사용자 이름 또는 비밀번호가 잘못되었습니다.");
+            return "login"; // 실패 시 다시 로그인 페이지로 이동
         }
-    }
-
-    // 특정 사용자 조회
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer userId) {
-        Optional<User> user = userService.findUserById(userId);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(404).body(null));
     }
 }

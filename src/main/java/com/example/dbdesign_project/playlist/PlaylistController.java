@@ -1,40 +1,51 @@
 package com.example.dbdesign_project.playlist;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/playlists")
+@Controller
+@RequestMapping("/playlists")
 public class PlaylistController {
-    private final PlaylistService playlistService;
+    private final PlaylistDAO playlistDAO;
 
-    public PlaylistController(PlaylistService playlistService) {
-        this.playlistService = playlistService;
+    public PlaylistController(PlaylistDAO playlistDAO) {
+        this.playlistDAO = playlistDAO;
+    }
+
+    // 재생목록 페이지로 이동 및 모든 재생목록 표시
+    @GetMapping("")
+    public String playlistPage(Model model, @RequestParam(required = false) Integer userId) {
+        userId = (userId != null) ? userId : 1; // 기본 userId 사용 예시
+        model.addAttribute("playlists", playlistDAO.getPlaylistsByUserId(userId));
+        return "playlist";
     }
 
     // 재생목록 생성
     @PostMapping("/create")
-    public ResponseEntity<Playlist> createPlaylist(@RequestParam Integer userId, @RequestParam String listName) {
-        Playlist playlist = playlistService.createPlaylist(userId, listName);
-        return ResponseEntity.ok(playlist);
+    public String createPlaylist(@RequestParam int userId, @RequestParam String listName) {
+        Playlist newPlaylist = new Playlist(null, userId, listName, null);
+        playlistDAO.createPlaylist(newPlaylist);
+        return "redirect:/playlists";
     }
 
-    // 사용자별 재생목록 조회
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Playlist>> getUserPlaylists(@PathVariable Integer userId) {
-        List<Playlist> playlists = playlistService.getPlaylistsByUser(userId);
-        return ResponseEntity.ok(playlists);
+    // 재생목록 이름 갱신
+    @PostMapping("/update")
+    public String updatePlaylist(@RequestParam int listId, @RequestParam String newName) {
+        playlistDAO.updatePlaylistName(listId, newName);
+        return "redirect:/playlists";
     }
 
     // 재생목록 삭제
-    @DeleteMapping("/{listId}")
-    public ResponseEntity<String> deletePlaylist(@PathVariable Integer listId) {
-        if (playlistService.deletePlaylist(listId)) {
-            return ResponseEntity.ok("재생목록 삭제 완료");
-        } else {
-            return ResponseEntity.status(404).body("재생목록을 찾을 수 없습니다.");
-        }
+    @PostMapping("/delete")
+    public String deletePlaylist(@RequestParam int listId) {
+        playlistDAO.deletePlaylist(listId);
+        return "redirect:/playlists";
+    }
+
+    // 재생목록 선택 후 song 페이지로 이동
+    @GetMapping("/select")
+    public String selectPlaylist(@RequestParam int listId) {
+        return "redirect:/songs?listId=" + listId;
     }
 }

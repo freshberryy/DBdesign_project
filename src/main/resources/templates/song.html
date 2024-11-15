@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${playlistName} + '의 노래 관리'">노래 관리</title>
+</head>
+<body>
+<h1 th:text="${playlistName} + '의 노래 관리'">노래 관리</h1>
+
+<!-- 노래 추가 -->
+<h2>노래 추가</h2>
+<form action="/songs/add" method="post">
+    <input type="hidden" name="listId" th:value="${selectedListId}">
+    <label for="artist">가수명:</label>
+    <input type="text" id="artist" name="artist" required><br>
+    <label for="songName">노래명:</label>
+    <input type="text" id="songName" name="songName" required><br>
+    <label for="releasedYear">발매년도:</label>
+    <input type="number" id="releasedYear" name="releasedYear" required><br>
+    <button type="submit">노래 추가</button>
+</form>
+
+<!-- 노래 목록 -->
+<h2>노래 목록</h2>
+<ul>
+    <li th:each="song : ${songs}">
+        <!-- 노래 정보 -->
+        <span th:text="${song.artist} + ' - ' + ${song.songName} + ' (' + ${song.releasedYear} + ')'">노래 정보</span>
+
+        <!-- 태그 목록 -->
+        <span> | 태그: </span>
+        <span th:each="tag : ${song.tags}">
+            <span th:text="${tag}">태그 이름</span>
+            <!-- 태그 삭제 -->
+            <form action="/songtag/remove" method="post" style="display:inline;">
+                <input type="hidden" name="songId" th:value="${song.songId}">
+                <input type="hidden" name="tagName" th:value="${tag}">
+                <input type="hidden" name="listId" th:value="${selectedListId}">
+                <button type="submit">x</button>
+            </form>
+        </span>
+
+        <!-- 태그 추가 -->
+        <form action="/songtag/add" method="post" style="display:inline; margin-left:10px;">
+            <input type="hidden" name="songId" th:value="${song.songId}">
+            <input type="hidden" name="listId" th:value="${selectedListId}">
+            <input type="text" name="tagName" placeholder="태그 추가" required>
+            <button type="submit">추가</button>
+        </form>
+
+        <!-- 노래 삭제 -->
+        <form action="/playlistsong/remove" method="post" style="display:inline; margin-left:10px;">
+            <input type="hidden" name="listId" th:value="${selectedListId}">
+            <input type="hidden" name="songId" th:value="${song.songId}">
+            <button type="submit">노래 삭제</button>
+        </form>
+    </li>
+</ul>
+
+<!-- 노래 검색 -->
+<h2>노래 검색</h2>
+<form action="/songs/search" method="get">
+    <input type="hidden" name="listId" th:value="${selectedListId}">
+    <label for="searchArtist">가수명:</label>
+    <input type="text" id="searchArtist" name="artist"><br>
+    <label for="searchSongName">노래명:</label>
+    <input type="text" id="searchSongName" name="songName"><br>
+    <label for="searchReleasedYear">발매년도:</label>
+    <input type="number" id="searchReleasedYear" name="releasedYear"><br>
+    <button type="submit">검색</button>
+</form>
+
+<!-- 노래 정렬 -->
+<h2>노래 정렬</h2>
+<form action="/songs/sort" method="get">
+    <input type="hidden" name="listId" th:value="${selectedListId}">
+    <label for="sortBy">정렬 기준:</label>
+    <select id="sortBy" name="sortBy">
+        <option value="artist">가수명</option>
+        <option value="songName">노래명</option>
+        <option value="releasedYear">발매년도</option>
+    </select>
+    <label for="order">정렬 순서:</label>
+    <select id="order" name="order">
+        <option value="asc">오름차순</option>
+        <option value="desc">내림차순</option>
+    </select>
+    <button type="submit">정렬</button>
+</form>
+</body>
+</html>

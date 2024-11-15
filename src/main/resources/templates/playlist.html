@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>재생목록 관리</title>
+</head>
+<body>
+<h1>재생목록 관리</h1>
+
+<!-- 재생목록 생성 -->
+<h2>재생목록 생성</h2>
+<form action="/playlists/create" method="post">
+  <label for="listName">재생목록 이름:</label>
+  <input type="text" id="listName" name="listName" required><br>
+  <input type="hidden" name="userId" value="1"><!-- 기본 userId 사용 예 -->
+  <button type="submit">재생목록 생성</button>
+</form>
+
+<!-- 재생목록 목록 -->
+<h2>재생목록 목록</h2>
+<ul>
+  <li th:each="playlist : ${playlists}">
+    <span th:text="${playlist.listName}">재생목록 이름</span>
+    <form action="/playlists/update" method="post" style="display:inline;">
+      <input type="hidden" name="listId" th:value="${playlist.listId}">
+      <input type="text" name="newName" placeholder="새 재생목록 이름">
+      <button type="submit">갱신</button>
+    </form>
+    <form action="/playlists/delete" method="post" style="display:inline;">
+      <input type="hidden" name="listId" th:value="${playlist.listId}">
+      <button type="submit">삭제</button>
+    </form>
+    <form action="/playlists/select" method="get" style="display:inline;">
+      <input type="hidden" name="listId" th:value="${playlist.listId}">
+      <button type="submit">노래 관리</button>
+    </form>
+  </li>
+</ul>
+</body>
+</html>
