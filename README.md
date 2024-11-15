@@ -6,6 +6,9 @@
    - 백엔드 코드: src/main/java/com/example/dbdesign_project
    - 프론트엔드 코드: src/main/resources/templates
 
+- 현재 진행상황: 기본적 crud 구현 완료
+- 정렬 기능 구현 필요, 프론트엔드 완성 필요
+
 ### 1. 변경사항
 1. Playlist-Song 관계를 n:m으로 수정함으로써 한 개의 노래가 여러 개의 재생목록에 포함되도록 함.
 2. Song의 album 속성을 삭제하고 released_year로 대체
