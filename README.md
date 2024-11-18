@@ -13,6 +13,7 @@
 1. Playlist-Song 관계를 n:m으로 수정함으로써 한 개의 노래가 여러 개의 재생목록에 포함되도록 함.
 2. Song의 album 속성을 삭제하고 released_year로 대체
 3. Playlist 테이블의 creationDate를 creationTime으로 바꾸고 날짜와 시간을 저장하도록 함
+4. Song 테이블의 released_year 자료형을 YEAR에서 INTEGER로 변경
 
 
 ### 2. 개발환경
