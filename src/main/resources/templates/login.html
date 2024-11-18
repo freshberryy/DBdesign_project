@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
@@ -47,7 +48,7 @@
             font-weight: 700;
             margin-bottom: 2rem;
         }
-        
+
         a {
             margin-bottom: 0.7rem;
             padding-left: 1.5rem;
@@ -96,21 +97,22 @@
             transform: translateY(2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
     </style>
 </head>
+
 <body>
-<section>
-    <h1>로그인</h1>
-    <form action="/users/login" method="post">
-        <label for="userName">사용자 이름:</label><br>
-        <input type="text" id="userName" name="userName" required><br>
-        <label for="password">비밀번호:</label><br>
-        <input type="password" id="password" name="password" required><br>
-        <button type="submit" class="btnSubmit">로그인</button>
-    </form>
-    <p th:text="${message}"></p>
-    <a href="/users/register">계정이 없으신가요? 회원가입</a>
-</section>
+    <section>
+        <h1>로그인</h1>
+        <form action="/users/login" method="post">
+            <label for="userName">사용자 이름:</label><br>
+            <input type="text" id="userName" name="userName" required><br>
+            <label for="password">비밀번호:</label><br>
+            <input type="password" id="password" name="password" required><br>
+            <button type="submit" class="btnSubmit">로그인</button>
+        </form>
+        <p th:text="${message}"></p>
+        <a href="/users/register">계정이 없으신가요? 회원가입</a>
+    </section>
 </body>
+
 </html>
