@@ -12,9 +12,10 @@
 <form action="/playlists/create" method="post">
   <label for="listName">재생목록 이름:</label>
   <input type="text" id="listName" name="listName" required><br>
-  <input type="hidden" name="userId" value="1"><!-- 기본 userId 사용 예 -->
+  <input type="hidden" name="userId" th:value="${session.userId}">
   <button type="submit">재생목록 생성</button>
 </form>
+
 
 <!-- 재생목록 목록 -->
 <h2>재생목록 목록</h2>

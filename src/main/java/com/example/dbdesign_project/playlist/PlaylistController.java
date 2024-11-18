@@ -1,5 +1,6 @@
 package com.example.dbdesign_project.playlist;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,21 +14,27 @@ public class PlaylistController {
         this.playlistDAO = playlistDAO;
     }
 
-    // 재생목록 페이지로 이동 및 모든 재생목록 표시
     @GetMapping("")
-    public String playlistPage(Model model, @RequestParam(required = false) Integer userId) {
-        userId = (userId != null) ? userId : 1; // 기본 userId 사용 예시
+    public String playlistPage(Model model, HttpSession session) {
+        // 세션에서 userId 가져오기
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login"; // 세션에 userId가 없으면 로그인 페이지로 리다이렉트
+        }
+
+        // userId에 따른 재생목록 표시
         model.addAttribute("playlists", playlistDAO.getPlaylistsByUserId(userId));
         return "playlist";
     }
 
-    // 재생목록 생성
+
     @PostMapping("/create")
     public String createPlaylist(@RequestParam int userId, @RequestParam String listName) {
         Playlist newPlaylist = new Playlist(null, userId, listName, null);
         playlistDAO.createPlaylist(newPlaylist);
-        return "redirect:/playlists";
+        return "redirect:/playlists?userId=" + userId;
     }
+
 
     // 재생목록 이름 갱신
     @PostMapping("/update")

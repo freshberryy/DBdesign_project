@@ -1,5 +1,6 @@
 package com.example.dbdesign_project.user;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -40,14 +41,16 @@ public class UserController {
 
     // 로그인 처리
     @PostMapping("/login")
-    public String loginUser(@RequestParam String userName, @RequestParam String password, Model model) {
+    public String loginUser(@RequestParam String userName, @RequestParam String password, Model model, HttpSession session) {
         boolean loginSuccess = userDAO.loginUser(userName, password);
         if (loginSuccess) {
+            int userId = userDAO.getUserIdByUsername(userName); // userId 가져오기
+            session.setAttribute("userId", userId); // 세션에 userId 저장
             model.addAttribute("message", "로그인 성공!");
-            return "redirect:/playlists"; // 로그인 성공 시 재생목록 페이지로 이동
+            return "redirect:/playlists";
         } else {
             model.addAttribute("message", "로그인 실패: 사용자 이름 또는 비밀번호가 잘못되었습니다.");
-            return "login"; // 실패 시 다시 로그인 페이지로 이동
+            return "login";
         }
     }
 }

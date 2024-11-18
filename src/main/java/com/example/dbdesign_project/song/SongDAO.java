@@ -92,6 +92,7 @@ public class SongDAO {
 
     // 특정 재생목록에서 노래 정렬
     public List<Song> sortSongsInPlaylist(int listId, String sortBy, String order) {
+
         // 정렬 기준 및 순서 유효성 검증
         if (!List.of("artist", "songName", "released_year").contains(sortBy)) {
             throw new IllegalArgumentException("정렬 기준이 잘못되었습니다.");
