@@ -69,26 +69,40 @@ public class SongDAO {
                         "FROM Song s JOIN PlaylistSong ps ON s.songId = ps.songId WHERE ps.listId = ?"
         );
 
-        if (artist != null) sql.append(" AND s.artist = ?");
-        if (songName != null) sql.append(" AND s.songName = ?");
-        if (releasedYear != null) sql.append(" AND s.released_year = ?");
+        // 조건 추가
+        if (artist != null && !artist.isEmpty()) {
+            sql.append(" AND s.artist = ?");
+        }
+        if (songName != null && !songName.isEmpty()) {
+            sql.append(" AND s.songName = ?");
+        }
+        if (releasedYear != null) {
+            sql.append(" AND s.released_year = ?");
+        }
 
         return jdbcTemplate.query(sql.toString(), ps -> {
                     int paramIndex = 1;
                     ps.setInt(paramIndex++, listId);
-                    if (artist != null) ps.setString(paramIndex++, artist);
-                    if (songName != null) ps.setString(paramIndex++, songName);
-                    if (releasedYear != null) ps.setInt(paramIndex++, releasedYear);
-                }, (rs, rowNum) ->
-                        new Song(
-                                rs.getInt("songId"),
-                                rs.getString("artist"),
-                                rs.getString("songName"),
-                                rs.getInt("released_year"),
-                                new ArrayList<>() // 기본적으로 빈 리스트 설정
-                        )
+                    if (artist != null && !artist.isEmpty()) {
+                        ps.setString(paramIndex++, artist);
+                    }
+                    if (songName != null && !songName.isEmpty()) {
+                        ps.setString(paramIndex++, songName);
+                    }
+                    if (releasedYear != null) {
+                        ps.setInt(paramIndex++, releasedYear);
+                    }
+                },
+                (rs, rowNum) -> new Song(
+                        rs.getInt("songId"),
+                        rs.getString("artist"),
+                        rs.getString("songName"),
+                        rs.getInt("released_year"),
+                        new ArrayList<>()
+                )
         );
     }
+
 
     // 특정 재생목록에서 노래 정렬
     public List<Song> sortSongsInPlaylist(int listId, String sortBy, String order) {
