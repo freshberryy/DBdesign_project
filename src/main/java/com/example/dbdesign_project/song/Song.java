@@ -13,5 +13,5 @@ public class Song {
     private String artist;
     private String songName;
     private Integer releasedYear;
-    private List<String> tags = new ArrayList<>();
+    private List<String> tags;
 }

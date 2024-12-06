@@ -25,17 +25,20 @@ public class SongController {
 
     // 특정 재생목록의 노래 목록 표시
     @GetMapping("")
-    public String songPage(@RequestParam int listId, Model model) {
-        List<Song> songs = songDAO.getSongs(listId);
+    public String songPage(@RequestParam int listId,
+                           @RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "10") int size,
+                           Model model) {
 
-        // 각 노래에 태그 목록을 설정
-        for (Song song : songs) {
-            List<String> tags = tagDAO.getTagsForSong(song.getSongId());
-            song.setTags(tags != null ? tags : new ArrayList<>()); // null이면 빈 리스트 설정
-        }
+        int offset = (page) * size;
+        List<Song> songs = songDAO.getSongs(listId, offset, size);
+        int totalSongs = songDAO.countSongs(listId);
+        int totalPages = (int)Math.ceil((double)totalSongs / size);
 
         model.addAttribute("selectedListId", listId);
         model.addAttribute("songs", songs);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
         return "song";
     }
 
