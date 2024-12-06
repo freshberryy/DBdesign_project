@@ -18,11 +18,12 @@ public class SongDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     // 노래 조회
-    public List<Song> getSongs(int listId) {
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<Song> getSongs(int listId, int offset, int limit) {
         String sql = "select s.songId, s.artist, s.songName, s.released_year " +
                 "from Song s join PlaylistSong ps on s.songId = ps.songId " +
-                "where ps.listId = ?";
-        return jdbcTemplate.query(sql, new Object[]{listId}, (rs, rowNum) ->
+                "where ps.listId = ? limit ? offset ?";
+        return jdbcTemplate.query(sql, new Object[]{listId, limit, offset}, (rs, rowNum) ->
                 new Song(
                         rs.getInt("songId"),
                         rs.getString("artist"),
@@ -33,8 +34,13 @@ public class SongDAO {
         );
     }
 
+    public int countSongs(int listId) {
+        String sql = "select count(*) from PlaylistSong where listId = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{listId}, Integer.class);
+    }
+
     // 노래 추가
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void addSong(int listId, String artist, String songName, int releasedYear) {
         String sql = "insert into Song(artist, songName, released_year) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -53,14 +59,14 @@ public class SongDAO {
     }
 
     //노래 삭제
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void removeSong(int listId, int songId) {
         String sql = "delete from PlaylistSong where listId = ? AND songId = ?";
         jdbcTemplate.update(sql, listId, songId);
     }
 
     //노래 갱신
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void updateSong(int songId, String artist, String songName, int releasedYear) {
         String sql = "update Song set artist = ?, songName = ?, released_year = ? where songId = ?";
         jdbcTemplate.update(sql, artist, songName, releasedYear, songId);

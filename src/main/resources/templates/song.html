@@ -290,6 +290,20 @@
                 </div>
             </li>
         </ul>
+
+        <!-- 페이징 버튼 -->
+        <div class="pagination">
+            <a th:if="${currentPage > 0}"
+               th:href="@{'/songs'(listId=${selectedListId}, page=${currentPage - 1}, size=10)}"
+               style="text-decoration: none; padding: 10px; background: #341f97; color: white; border-radius: 5px;">이전</a>
+
+            <span>페이지: <span th:text="${currentPage + 1}"></span> / <span th:text="${totalPages}"></span></span>
+
+            <a th:if="${currentPage + 1 < totalPages}"
+               th:href="@{'/songs'(listId=${selectedListId}, page=${currentPage + 1}, size=10)}"
+               style="text-decoration: none; padding: 10px; background: #11998e; color: white; border-radius: 5px;">다음</a>
+        </div>
+
     </section>
 
 
