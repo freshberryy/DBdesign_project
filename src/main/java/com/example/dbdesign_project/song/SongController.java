@@ -1,7 +1,7 @@
 package com.example.dbdesign_project.song;
 
 import com.example.dbdesign_project.playlist.PlaylistDAO;
-import com.example.dbdesign_project.songtag.SongTagDAO;
+import com.example.dbdesign_project.tag.TagDAO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +14,13 @@ import java.util.List;
 public class SongController {
     private final SongDAO songDAO;
     private final PlaylistDAO playlistDAO;
-    private final SongTagDAO songTagDAO;
+    private final TagDAO tagDAO;
 
-    public SongController(SongDAO songDAO, PlaylistDAO playlistDAO, SongTagDAO songTagDAO) {
+    public SongController(SongDAO songDAO, PlaylistDAO playlistDAO, TagDAO tagDAO) {
         this.songDAO = songDAO;
         this.playlistDAO = playlistDAO;
 
-        this.songTagDAO = songTagDAO;
+        this.tagDAO = tagDAO;
     }
 
     // 특정 재생목록의 노래 목록 표시
@@ -30,7 +30,7 @@ public class SongController {
 
         // 각 노래에 태그 목록을 설정
         for (Song song : songs) {
-            List<String> tags = songTagDAO.getTagsForSong(song.getSongId());
+            List<String> tags = tagDAO.getTagsForSong(song.getSongId());
             song.setTags(tags != null ? tags : new ArrayList<>()); // null이면 빈 리스트 설정
         }
 

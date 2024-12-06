@@ -1,23 +1,22 @@
-package com.example.dbdesign_project.songtag;
+package com.example.dbdesign_project.tag;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/songtag")
-public class SongTagController {
-    private final SongTagDAO songTagDAO;
-
-    public SongTagController(SongTagDAO songTagDAO) {
-        this.songTagDAO = songTagDAO;
-    }
+public class TagController {
+    @Autowired
+    private TagDAO tagDAO;
 
     // 노래에 태그 추가
     @PostMapping("/add")
     public String addTagToSong(@RequestParam int songId,
                                @RequestParam String tagName,
                                @RequestParam int listId) {
-        songTagDAO.addTagToSong(songId, tagName.trim());
+        tagDAO.addTagToSong(songId, tagName.trim());
         return "redirect:/songs?listId=" + listId;
     }
 
@@ -26,7 +25,7 @@ public class SongTagController {
     public String removeTagFromSong(@RequestParam int songId,
                                     @RequestParam String tagName,
                                     @RequestParam int listId) {
-        songTagDAO.removeTagFromSong(songId, tagName.trim());
+        tagDAO.removeTagFromSong(songId, tagName.trim());
         return "redirect:/songs?listId=" + listId;
     }
 }
