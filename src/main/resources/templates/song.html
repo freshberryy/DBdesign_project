@@ -276,6 +276,17 @@
                         <input type="hidden" name="songId" th:value="${song.songId}">
                         <button type="submit" class="delete-btn">노래 삭제</button>
                     </form>
+                    <form action="/songs/update" method="post" style="margin-top: 10px;">
+                        <input type="hidden" name="songId" th:value="${song.songId}">
+                        <input type="hidden" name="listId" th:value="${selectedListId}">
+                        <label for="artist">가수명:</label>
+                        <input type="text" name="artist" th:value="${song.artist}" required>
+                        <label for="songName">노래명:</label>
+                        <input type="text" name="songName" th:value="${song.songName}" required>
+                        <label for="releasedYear">발매년도:</label>
+                        <input type="number" name="releasedYear" th:value="${song.releasedYear}" required>
+                        <button type="submit">노래 갱신</button>
+                    </form>
                 </div>
             </li>
         </ul>
