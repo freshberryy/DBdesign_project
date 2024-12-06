@@ -1,9 +1,12 @@
 package com.example.dbdesign_project.song;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -12,13 +15,9 @@ import java.util.List;
 
 @Repository
 public class SongDAO {
-    private final JdbcTemplate jdbcTemplate;
-
-    public SongDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    // 특정 재생목록에 포함된 모든 노래 조회
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    // 노래 조회
     public List<Song> getSongsInPlaylist(int listId) {
         String sql = "SELECT s.songId, s.artist, s.songName, s.released_year " +
                 "FROM Song s JOIN PlaylistSong ps ON s.songId = ps.songId " +
@@ -29,7 +28,7 @@ public class SongDAO {
                         rs.getString("artist"),
                         rs.getString("songName"),
                         rs.getInt("released_year"),
-                        new ArrayList<>() // 기본적으로 빈 리스트 설정
+                        new ArrayList<>()
                 )
         );
     }
@@ -47,29 +46,28 @@ public class SongDAO {
             return ps;
         }, keyHolder);
 
-        return keyHolder.getKey().intValue(); // 반환된 songId
+        return keyHolder.getKey().intValue();
     }
 
-    // 특정 재생목록에 노래 추가
-    public int addSongToPlaylist(int listId, int songId) {
+    //재생목록에 노래 추가
+    public void addSongToPlaylist(int listId, int songId) {
         String sql = "INSERT INTO PlaylistSong (listId, songId) VALUES (?, ?)";
-        return jdbcTemplate.update(sql, listId, songId);
+        jdbcTemplate.update(sql, listId, songId);
     }
 
-    // 특정 재생목록에서 노래 삭제
-    public int removeSongFromPlaylist(int listId, int songId) {
+    //재생목록에서 노래 삭제
+    public void removeSongFromPlaylist(int listId, int songId) {
         String sql = "DELETE FROM PlaylistSong WHERE listId = ? AND songId = ?";
-        return jdbcTemplate.update(sql, listId, songId);
+        jdbcTemplate.update(sql, listId, songId);
     }
 
-    // 특정 재생목록에서 조건에 맞는 노래 검색
+    //재생목록에서 노래 검색
     public List<Song> searchSongsInPlaylist(int listId, String artist, String songName, Integer releasedYear) {
         StringBuilder sql = new StringBuilder(
                 "SELECT s.songId, s.artist, s.songName, s.released_year " +
                         "FROM Song s JOIN PlaylistSong ps ON s.songId = ps.songId WHERE ps.listId = ?"
         );
-
-        // 조건 추가
+        // 검색 조건
         if (artist != null && !artist.isEmpty()) {
             sql.append(" AND s.artist = ?");
         }
@@ -79,7 +77,6 @@ public class SongDAO {
         if (releasedYear != null) {
             sql.append(" AND s.released_year = ?");
         }
-
         return jdbcTemplate.query(sql.toString(), ps -> {
                     int paramIndex = 1;
                     ps.setInt(paramIndex++, listId);
@@ -102,12 +99,10 @@ public class SongDAO {
                 )
         );
     }
-
-
-    // 특정 재생목록에서 노래 정렬
+    // 노래 정렬
     public List<Song> sortSongsInPlaylist(int listId, String sortBy, String order) {
 
-        // 정렬 기준 및 순서 유효성 검증
+        // 정렬 기준
         if (!List.of("artist", "songName", "released_year").contains(sortBy)) {
             throw new IllegalArgumentException("정렬 기준이 잘못되었습니다.");
         }
@@ -125,7 +120,7 @@ public class SongDAO {
                         rs.getString("artist"),
                         rs.getString("songName"),
                         rs.getInt("released_year"),
-                        new ArrayList<>() // 기본적으로 빈 리스트 설정
+                        new ArrayList<>()
                 )
         );
     }

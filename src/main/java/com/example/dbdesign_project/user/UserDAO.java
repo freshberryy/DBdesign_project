@@ -22,7 +22,7 @@ public class UserDAO {
         return count != null && count > 0;
     }
 
-    // 사용자 이름으로 userId 가져오기
+    // 사용자 이름으로 id 가져오기
     public int getUserIdByUsername(String username) {
         String sql = "select userId from User where username = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, username);
