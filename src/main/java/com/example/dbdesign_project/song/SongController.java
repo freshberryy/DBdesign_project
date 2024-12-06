@@ -26,7 +26,7 @@ public class SongController {
     // 특정 재생목록의 노래 목록 표시
     @GetMapping("")
     public String songPage(@RequestParam int listId, Model model) {
-        List<Song> songs = songDAO.getSongsInPlaylist(listId);
+        List<Song> songs = songDAO.getSongs(listId);
 
         // 각 노래에 태그 목록을 설정
         for (Song song : songs) {
@@ -45,14 +45,17 @@ public class SongController {
                                     @RequestParam String artist,
                                     @RequestParam String songName,
                                     @RequestParam int releasedYear) {
-        // 새 노래 추가 및 songId 가져오기
-        Song newSong = new Song(null, artist, songName, releasedYear, null);
-        int songId = songDAO.addSong(newSong); // songId 반환
-        newSong.setSongId(songId); // Song 객체에 songId 설정
+        songDAO.addSong(listId, artist, songName, releasedYear);
+        return "redirect:/songs?listId=" + listId;
+    }
 
-        // 재생목록에 추가
-        songDAO.addSongToPlaylist(listId, newSong.getSongId());
-
+    @PostMapping("/update")
+    public String updateSong(@RequestParam int songId,
+                             @RequestParam String artist,
+                             @RequestParam String songName,
+                             @RequestParam int releasedYear,
+                             @RequestParam int listId) {
+        songDAO.updateSong(songId, artist, songName, releasedYear);
         return "redirect:/songs?listId=" + listId;
     }
 
@@ -60,7 +63,7 @@ public class SongController {
     // 선택된 재생목록에서 노래 삭제
     @PostMapping("/delete")
     public String deleteSongFromPlaylist(@RequestParam int listId, @RequestParam int songId) {
-        songDAO.removeSongFromPlaylist(listId, songId);
+        songDAO.removeSong(listId, songId);
         return "redirect:/songs?listId=" + listId;
     }
 
@@ -71,7 +74,7 @@ public class SongController {
                                         @RequestParam(required = false) String songName,
                                         @RequestParam(required = false) Integer releasedYear,
                                         Model model) {
-        List<Song> results = songDAO.searchSongsInPlaylist(listId, artist, songName, releasedYear);
+        List<Song> results = songDAO.searchSongs(listId, artist, songName, releasedYear);
         model.addAttribute("songs", results);
         model.addAttribute("selectedListId", listId);
         model.addAttribute("playlistName", playlistDAO.getPlaylistNameById(listId));
@@ -84,7 +87,7 @@ public class SongController {
                                       @RequestParam String sortBy,
                                       @RequestParam String order,
                                       Model model) {
-        List<Song> sortedSongs = songDAO.sortSongsInPlaylist(listId, sortBy, order);
+        List<Song> sortedSongs = songDAO.sortSongs(listId, sortBy, order);
         model.addAttribute("songs", sortedSongs);
         model.addAttribute("selectedListId", listId);
         model.addAttribute("playlistName", playlistDAO.getPlaylistNameById(listId));
