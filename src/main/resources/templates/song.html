@@ -20,10 +20,11 @@
         }
 
         .container {
+            padding-top: 5px;
             display: flex;
             justify-content: space-between;
-            width: 95%;
-            max-width: 1200px;
+            width: 100%;
+            max-width: 1000px;
             height: 100vh;
             overflow-y: auto;
             gap: 1.5rem;
@@ -32,24 +33,29 @@
         section {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(12px);
-            padding: 2rem;
+            padding: 1.75rem;
             border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             flex: 1;
             overflow: hidden;
-            max-height: 90%;
+            max-height: 76%;
         }
 
         .left-section {
+            padding-top: 10px;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            max-height: 80vh;
         }
 
         .right-section {
-            flex: 1;
+            
+            flex: 3;
             overflow-y: auto;
         }
 
@@ -65,7 +71,6 @@
         }
 
         h2 {
-            margin-top: 1.5rem;
             color: #ffffff;
         }
 
@@ -87,14 +92,16 @@
 
         ul li span.song-info {
             font-size: 2rem;
+            margin-left: 5px;
             flex-grow: 1;
             color: #ffffff;
         }
 
         ul li::before {
             content: "•";
-            color: #15b320;
-            font-size: 1.5rem;
+            color: #25db10;
+            margin-top: 12px;
+            font-size: 2rem;
             position: absolute;
             left: 0;
         }
@@ -103,7 +110,7 @@
             display: block;
             width: 100%;
             margin: 0.5rem 0;
-            padding: 0.5rem;
+            padding: 0.2rem;
             font-size: 1rem;
             border: none;
             border-radius: 10px;
@@ -134,8 +141,9 @@
         }
         /* 태그 삭제 버튼 스타일 */
         .tag-delete-btn {
-            width: 15px;
-            height: 15px;
+            width: 20px;
+            height: 20px;
+            margin-top: 28px;
             font-size: 0.7rem;
             background-color: #ff4d4d;
             color: #fff;
@@ -188,6 +196,14 @@
         .delete-btn:hover {
             background-color: #0d7f70;
         }
+
+        .pagination {
+            text-align: center;
+        }
+        
+        dd {
+            margin: 90px;
+        }
     </style>
 </head>
 
@@ -198,7 +214,6 @@
     <div class="left-section">
         <section>
             <!-- 노래 추가 -->
-            <h2>노래 추가</h2>
             <form action="/songs/add" method="post">
                 <input type="hidden" name="listId" th:value="${selectedListId}">
                 <label for="artist">가수명:</label>
@@ -212,7 +227,6 @@
         </section>
         <section>
             <!-- 노래 검색 -->
-            <h2>노래 검색</h2>
             <form action="/songs/search" method="get">
                 <input type="hidden" name="listId" th:value="${selectedListId}">
                 <label for="searchArtist">가수명:</label>
@@ -225,8 +239,8 @@
             </form>
         </section>
         <section>
+            <p></p>
             <!-- 노래 정렬 -->
-            <h2>노래 정렬</h2>
             <form action="/songs/sort" method="get">
                 <input type="hidden" name="listId" th:value="${selectedListId}">
                 <label for="sortBy">정렬 기준:</label>
@@ -244,7 +258,6 @@
             </form>
         </section>
     </div>
-
     <!-- 오른쪽 영역 -->
     <section class="right-section">
         <h2>노래 목록</h2>
@@ -276,6 +289,7 @@
                         <input type="hidden" name="songId" th:value="${song.songId}">
                         <button type="submit" class="delete-btn">노래 삭제</button>
                     </form>
+                    <dd></dd>
                     <form action="/songs/update" method="post" style="margin-top: 10px;">
                         <input type="hidden" name="songId" th:value="${song.songId}">
                         <input type="hidden" name="listId" th:value="${selectedListId}">
