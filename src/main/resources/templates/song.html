@@ -192,7 +192,7 @@
 </head>
 
 <body>
-<h1 th:text="${playlistName} + '의 노래 관리'">노래 관리</h1>
+<h1>노래 관리</h1>
 <div class="container">
     <!-- 왼쪽 영역 -->
     <div class="left-section">
@@ -258,6 +258,7 @@
                     <form action="/songtag/remove" method="post" style="display: inline; margin-right: 5px;">
                         <input type="hidden" name="songId" th:value="${song.songId}">
                         <input type="hidden" name="tagName" th:value="${tag}">
+                        <input type="hidden" name="listId" th:value="${selectedListId}">
                         <button type="submit" class="tag-delete-btn">x</button>
                     </form>
                     <span th:text="${tag}" style="margin-right: 10px;">태그 이름</span>
@@ -269,6 +270,7 @@
                     <form action="/songtag/add" method="post" style="margin-right: 10px;">
                         <input type="hidden" name="songId" th:value="${song.songId}">
                         <input type="text" name="tagName" placeholder="태그 추가" class="tag-input" required>
+                        <input type="hidden" name="listId" th:value="${selectedListId}">
                         <button type="submit" class="add-tag-btn">+</button>
                     </form>
                     <form action="/songs/delete" method="post">

@@ -16,10 +16,9 @@ public class PlaylistController {
 
     @GetMapping("")
     public String playlistPage(Model model, HttpSession session) {
-        // 세션에서 userId 가져오기
         Integer userId = (Integer) session.getAttribute("userId");
         if (userId == null) {
-            return "redirect:/login"; // 세션에 userId가 없으면 로그인 페이지로 리다이렉트
+            return "redirect:/login";
         }
 
         // userId에 따른 재생목록 표시
