@@ -1,5 +1,6 @@
 package com.example.dbdesign_project.song;
 
+import com.example.dbdesign_project.tag.TagDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -17,13 +18,16 @@ import java.util.List;
 public class SongDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private TagDAO tagDAO;
+
     // 노래 조회
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<Song> getSongs(int listId, int offset, int limit) {
         String sql = "select s.songId, s.artist, s.songName, s.released_year " +
                 "from Song s join PlaylistSong ps on s.songId = ps.songId " +
                 "where ps.listId = ? limit ? offset ?";
-        return jdbcTemplate.query(sql, new Object[]{listId, limit, offset}, (rs, rowNum) ->
+        List<Song> songs =  jdbcTemplate.query(sql, new Object[]{listId, limit, offset}, (rs, rowNum) ->
                 new Song(
                         rs.getInt("songId"),
                         rs.getString("artist"),
@@ -32,6 +36,11 @@ public class SongDAO {
                         new ArrayList<>()
                 )
         );
+        for(Song song : songs) {
+            List<String> tags = tagDAO.getTagsForSong(song.getSongId());
+            song.setTags(tags);
+        }
+        return songs;
     }
 
     public int countSongs(int listId) {
